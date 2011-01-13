@@ -8,4 +8,6 @@
 
 extern int tests_run;
 
+#define streql(left, right) (strcmp(left, right) == 0)
+
 #endif /* _MINUNIT_H */

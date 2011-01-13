@@ -46,7 +46,7 @@ char *translate(char *infix)
                     char *msg = malloc(sizeof(char) * (max_msg_len + 1));
                     int pos = curr-(infix+1);
                     char *th = (pos == 1 ? "st" : (pos == 2 ? "nd" : "th"));
-                    sprintf(msg, "syntax error near %d%s character", pos, th);
+                    sprintf(msg, "syntax error in infix expression near %d%s character", pos, th);
                     error(msg);
                     
                     free(msg);
@@ -161,7 +161,10 @@ char *translate(char *infix)
         return 0;
     }
     
-    /* else everything went according to plan */
+    /* else everything went according to plan, then remove the trailing space and return */
+    if (postfix[strlen(postfix)-1] == ' ') {
+        postfix[strlen(postfix)-1] = '\0';
+    }
     free(token);
     return postfix;
 }

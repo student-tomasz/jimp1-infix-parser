@@ -3,13 +3,15 @@
 #include <string.h>
 #include "minunit.h"
 #include "translator.h"
+#include "expression.h"
 
 int tests_run = 0;
 
 int main(int argc, char **argv)
 {
     int (*test_suites[])() = {
-        all_translator_tests
+        all_translator_tests,
+        all_expression_tests
     };
 
     int i;
