@@ -18,6 +18,7 @@ char *translate(char *infix)
     strcpy(postfix, "\0");
     
     token_stack_t *ops_st = NULL;
+    int num_c = 0;
     
     char *token = malloc(sizeof(char) * (strlen(infix) + 1));
     strcpy(token, "\0");
@@ -47,7 +48,7 @@ char *translate(char *infix)
                     char *th = NULL;
                     int pos = curr-(infix+1);
                     th = (pos == 1 ? "st" : (pos == 2 ? "nd" : "th"));
-                    sprintf(msg, "syntax error near %ld%s character", pos, th);
+                    sprintf(msg, "syntax error near %d%s character", pos, th);
                     error(msg);
                     
                     free(msg);
@@ -68,6 +69,9 @@ char *translate(char *infix)
                 while (!stack_empty(ops_st) && !streql(stacked_op = stack_top(ops_st), "(")) {
                     strcat(postfix, stacked_op); /* add to output */
                     strcat(postfix, " ");
+                    if (!(find_op(stacked_op[0])->unary)) { /* decrement unused numbers */
+                        --num_c;
+                    }
                     stack_pop(&ops_st); /* remove from stack */
                     free(stacked_op);
                 }
@@ -95,9 +99,12 @@ char *translate(char *infix)
                     op_t *op2 = find_op(stacked_op[0]);
                     if ((op1->association == left && op1->precedence <= op2->precedence) ||
                         (op1->association == right && op1->precedence < op2->precedence)) {
-                            stack_pop(&ops_st);
                             strcat(postfix, stacked_op);
                             strcat(postfix, " ");
+                            if (!(find_op(stacked_op[0])->unary)) { /* decrement unused numbers */
+                                --num_c;
+                            }
+                            stack_pop(&ops_st);
                     }
                     else {
                         free(stacked_op);
@@ -129,6 +136,8 @@ char *translate(char *infix)
             --curr;
             /* reset occurence of last operator */
             last_op = NULL;
+            /* bump up numbers unused in expression */
+            ++num_c;
         }
         /* or we can stumble upon smth totally different */
         else if (!is_whitespace(*curr)) {
@@ -144,7 +153,7 @@ char *translate(char *infix)
     }
     
     /* if there is anything left on stack, then we have unmatched brackets */
-    while (!stack_empty(ops_st)) {
+    if (!stack_empty(ops_st)) {
         error("umatched brackets");
         
         free(token);
@@ -152,6 +161,16 @@ char *translate(char *infix)
         return 0;
     }
     
+    /* if there is more than one unused number left (which will be a result) then we'ge got mismatched opartors */
+    if (num_c != 1) {
+        error("quantity of operators doesn\'t match quantity of operands");
+        
+        free(token);
+        free(postfix);
+        return 0;
+    }
+    
+    /* else everything went according to plan */
     free(token);
     return postfix;
 }
