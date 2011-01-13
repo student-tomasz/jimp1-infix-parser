@@ -55,20 +55,28 @@ static void expr_define(expr_list_t **expressions)
     printf("define new expression:\n");
     printf("* name: ");
     getstr(name);
+    
+    if (expr_list_find(*expressions, name) != NULL) {
+        printf("! there already is an expression called '%s'\n", name);
+        free(infix);
+        free(name);
+        return;
+    }
+    
     printf("* expression: ");
     getstr(infix);
     printf("\n");
     
     expr_t *expression = expr_init(name, infix);
     if (!expression) {
-        printf("'%s' is not a valid expression\n", infix);
+        printf("! '%s' is not a valid expression\n", infix);
         free(infix);
         free(name);
         return;
     }
     expr_list_add(expressions, expression);
     
-    printf("just created expression:\n");
+    printf("created expression:\n");
     printf("* name    : '%s'\n", expression->name);
     printf("* infix   : '%s'\n", expression->infix);
     printf("* postfix : '%s'\n", expression->postfix);
@@ -90,7 +98,7 @@ static void expr_calculate(expr_list_t *expressions)
     getstr(name);
     
     if ((expression = expr_list_find(expressions, name)) == NULL) {
-        printf("there is no '%s' expression\n", name);
+        printf("! there is no '%s' expression\n", name);
         free(variables);
         free(name);
         return;
