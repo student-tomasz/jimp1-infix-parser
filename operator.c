@@ -66,7 +66,8 @@ double multiply(double a, double b)
 
 double divide(double a, double b)
 {
-    if (b <= 1e-13) error("dividing by 0.0");
+    double eps = 1e-13;
+    if (b >= -eps && b <= eps) error("dividing by 0.0");
     return a/b;
 }
 
