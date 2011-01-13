@@ -22,7 +22,6 @@ char *translate(char *infix)
     
     char *token = malloc(sizeof(char) * (strlen(infix) + 1));
     strcpy(token, "\0");
-    char *token_start = NULL;
     
     op_t *curr_op = NULL;
     op_t dummy_op = { '@', 0, none, 0 };
@@ -65,19 +64,19 @@ char *translate(char *infix)
             }
             /* if closing bracket then pop all operators until matching bracket is found */
             else if (curr_op->op == ')') {
-                char *stacked_op = NULL;
-                while (!stack_empty(ops_st) && !streql(stacked_op = stack_top(ops_st), "(")) {
-                    strcat(postfix, stacked_op); /* add to output */
+                char *tmp_op = NULL;
+                while (!stack_empty(ops_st) && !streql(tmp_op = stack_top(ops_st), "(")) {
+                    strcat(postfix, tmp_op); /* add to output */
                     strcat(postfix, " ");
-                    if (!(find_op(stacked_op[0])->unary)) { /* decrement unused numbers */
+                    if (!(find_op(tmp_op[0])->unary)) { /* decrement unused numbers */
                         --num_c;
                     }
                     stack_pop(&ops_st); /* remove from stack */
-                    free(stacked_op);
+                    free(tmp_op);
                 }
                 /* now get rid of '(' from stack */
                 /* if stack hit bottom or last op from stack isn't '(' then fail */
-                if (stack_empty(ops_st) || !streql(stacked_op, "(")) {
+                if (stack_empty(ops_st) || !streql(tmp_op, "(")) {
                     error("unmatched brackets");
                     
                     free(token);
@@ -87,36 +86,36 @@ char *translate(char *infix)
                 /* otherwise pop it from stack and carry on */
                 else {
                     stack_pop(&ops_st);
-                    free(stacked_op);
+                    free(tmp_op);
                 }
             }
             /* if regular operator then we're fucked */
             else {
                 /* pop all operators until we get one is counted after current op */
                 while (!stack_empty(ops_st)) {
-                    char *stacked_op = stack_top(ops_st);
+                    char *tmp_op = stack_top(ops_st);
                     op_t *op1 = curr_op;
-                    op_t *op2 = find_op(stacked_op[0]);
+                    op_t *op2 = find_op(tmp_op[0]);
                     if ((op1->association == left && op1->precedence <= op2->precedence) ||
                         (op1->association == right && op1->precedence < op2->precedence)) {
-                            strcat(postfix, stacked_op);
+                            strcat(postfix, tmp_op);
                             strcat(postfix, " ");
-                            if (!(find_op(stacked_op[0])->unary)) { /* decrement unused numbers */
+                            if (!(find_op(tmp_op[0])->unary)) { /* decrement unused numbers */
                                 --num_c;
                             }
                             stack_pop(&ops_st);
                     }
                     else {
-                        free(stacked_op);
+                        free(tmp_op);
                         break;
                     }
-                    free(stacked_op);
+                    free(tmp_op);
                 }
                 /* put current op onto the stack */
-                char *stacked_op = malloc(sizeof(char) * (2 + 1));
-                sprintf(stacked_op, "%c", curr_op->op);
-                stack_push(&ops_st, stacked_op);
-                free(stacked_op);
+                char *tmp_op = malloc(sizeof(char) * (2 + 1));
+                sprintf(tmp_op, "%c", curr_op->op);
+                stack_push(&ops_st, tmp_op);
+                free(tmp_op);
             }
             /* update last_op to the just processed operator */
             last_op = curr_op;
@@ -124,12 +123,12 @@ char *translate(char *infix)
         /* if it's not an operator, but it's a valid number/variable */
         else if (is_operand(*curr)) {
             /* read the whole operand name */
-            token_start = curr;
+            char *operand_start = curr;
             while ((*curr) && is_operand(*curr)) {
                 ++curr;
             }
-            strncpy(token, token_start, curr-token_start);
-            token[curr-token_start] = '\0';
+            strncpy(token, operand_start, curr-operand_start);
+            token[curr-operand_start] = '\0';
             strcat(postfix, token);
             strcat(postfix, " ");
             /* go back to the last char of token, for loop will increment curr */
