@@ -33,6 +33,8 @@ static int passing_suite()
     mu_assert(streql(expr_evaluate(expr_a, "a=3;b=2;c=5;d=6;"), "-6"));
     mu_assert(streql(expr_evaluate(expr_a, "a = 3;  b= 2; c  =5;\td\t=6"), "-6"));
     mu_assert(streql(expr_evaluate(expr_a, "a=3;b=2;c=5;\td asd=6;"), "-6"));
+    mu_assert(streql(expr_evaluate(expr_a, "+=3;a=3;b=2;c=5;\td asd=6;"), "-6"));
+    mu_assert(streql(expr_evaluate(expr_a, "(a+)=5;a=3;b=2;c=5;\td asd=6;"), "-6"));
     return 0;
 }
 
