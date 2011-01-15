@@ -1,6 +1,12 @@
 CC = gcc
 CFLAGS = -Wall
-SOURCES = token_stack.c operator.c translator.c expression.c expression_list.c main.c
+SOURCES =\
+    token_stack.c\
+    operator.c\
+    translator.c\
+    expression.c\
+    expression_list.c\
+    main.c
 OBJECTS = $(SOURCES:%.c=%.o)
 EXECUTABLE = parser
 TESTSDIR = tests
