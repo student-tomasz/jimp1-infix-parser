@@ -115,11 +115,11 @@ static char *var_evaluate(char *variables, char *token)
         sscanf(pair, "%s", k);
         sscanf(eq+1, "%s", v);
         
-        /* if 'token' we're looking for is 'k' */
+        /* if we've got match on 'k' as our 'token' then parse the value */
         if (strcmp(token, k) == 0) {
             free(k);
             free(hash);
-            /* then check if 'v' given for this key is a valid number */
+            /* check if 'v' we've read is a valid number */
             if (strisnum(v)) {
                 return v;
             }
@@ -159,9 +159,27 @@ static char *var_evaluate(char *variables, char *token)
 
 static int strisnum(char *source)
 {
-    char *curr = 0;
-    for (curr = source; *curr; ++curr) {
-        if (!isdigit(*curr) && *curr != '.' && *curr != '-') {
+    int dot_count = 0;
+    
+    char *curr = source;
+    if (*curr == '-') {
+        if (!*(++curr))
+            return 0;
+    }
+    else if (*curr == '.') {
+        if (!*(++curr))
+            return 0;
+        else
+            ++dot_count;
+    }
+    
+    for (; *curr; ++curr) {
+        if (*curr == '.') {
+            if (++dot_count > 1) {
+                return 0;
+            }
+        }
+        else if (!isdigit(*curr)) {
             return 0;
         }
     }
