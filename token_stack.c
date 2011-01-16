@@ -47,7 +47,7 @@ void stack_print(token_stack_t *head)
     fprintf(stdout, "\n");
 }
 
-int stack_empty(token_stack_t *head) /* yeah, I know... */
+int stack_is_empty(token_stack_t *head) /* yeah, I know... */
 {
     return head == NULL;
 }

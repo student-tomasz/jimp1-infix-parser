@@ -64,7 +64,7 @@ char *translate(char *infix)
             /* if closing bracket then pop all operators until matching bracket is found */
             else if (op_is_equal(curr_op, ")")) {
                 op_t *tmp_op = op_find_by_str(stack_top(ops_st));
-                while (!stack_empty(ops_st) && !op_is_equal(tmp_op, "(")) {
+                while (!stack_is_empty(ops_st) && !op_is_equal(tmp_op, "(")) {
                     strcat(postfix, tmp_op->op); /* add to output */
                     strcat(postfix, " ");
                     if (!(tmp_op->unary)) { /* decrement unused numbers */
@@ -75,7 +75,7 @@ char *translate(char *infix)
                 }
                 /* now get rid of '(' from stack */
                 /* if stack hit bottom or last op from stack isn't '(' then fail */
-                if (stack_empty(ops_st) || !op_is_equal(tmp_op, "(")) {
+                if (stack_is_empty(ops_st) || !op_is_equal(tmp_op, "(")) {
                     error("unmatched brackets");
                     
                     free(token);
@@ -90,7 +90,7 @@ char *translate(char *infix)
             /* if regular operator then we're fucked */
             else {
                 /* pop all operators until we get one is counted after current op */
-                while (!stack_empty(ops_st)) {
+                while (!stack_is_empty(ops_st)) {
                     op_t *op1 = curr_op;
                     op_t *op2 = op_find_by_str(stack_top(ops_st));
                     if ((op1->association == left && op1->precedence <= op2->precedence) ||
@@ -144,7 +144,7 @@ char *translate(char *infix)
     }
     
     /* if there is anything left on stack, then we have unmatched brackets */
-    if (!stack_empty(ops_st)) {
+    if (!stack_is_empty(ops_st)) {
         error("umatched brackets");
         
         free(token);
