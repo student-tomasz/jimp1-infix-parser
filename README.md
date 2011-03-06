@@ -9,8 +9,8 @@ obliczanie wartości tych wyrażeń dla zadanych wartości zmiennych.
 
 ### Kompilacja:
 
-Wywołanie `make all` powinno załatwić sprawę. W przeciwnym przypadku trzeba
-przeczytać output i naprawić.
+Wywołanie `make all` powinno załatwić sprawę. W przeciwnym przypadku output
+jest twoim przyjacielem.
 
 ### Obsługa:
 
@@ -23,13 +23,13 @@ polecenie `cal` lub `c`. Wymagane jest podanie nazwy wyrażenia i ciągu
 wartości dla zmiennych w formacie: `a = 3.5; b = 1; c = -5;`.
 
 Z założenia program nie akceptuje wyrażenia jeśli jest niepoprawne składniowo.
-Jeśli wyrażenie zostanie zaakceptowane, program będzie próbował je wyliczyć.
+Jeśli wyrażenie zostanie zaakceptowane, program będzie próbował je wyliczyć i
+prawdopodbnie się przewróci.
 
 ### Testy:
 
-Obecny jest pakiet testów dla każdego z modułów aplikacji. Ich kod znajduje
-się w folderze `tests/`. Kompilacja i wywołanie testów jest zdefiniowane w
-Makefile pod regułą `make test`.
+Testy są w `tests/`. Pokrywają podstawowe wymagania. Kompilacja i wywołanie
+testów jest zdefiniowane w `Makefile` pod regułą `make test`.
 
 ## Autorzy:
 
